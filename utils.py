@@ -448,7 +448,7 @@ def apply_theme_css():
 
         /* Enhanced expander styling for alerts */
         div[data-testid="stExpander"] {
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(52, 152, 219, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(52, 152, 219, 0.05) 100%) !important;
             border-radius: 10px !important;
             border: 1px solid rgba(46, 204, 113, 0.2) !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
