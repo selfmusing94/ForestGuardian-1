@@ -286,11 +286,13 @@ def main():
                                 </button>
                                 """
                                 st.markdown(view_map_html, unsafe_allow_html=True)
-                                # Hidden button for functionality
-                                if st.button(f"View on Map", key=f"map_btn_{i}", help="Click to view on map", label_visibility="collapsed"):
+                                # Hidden button for functionality (with minimal height to hide it)
+                                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                                if st.button(f"View on Map", key=f"map_btn_{i}"):
                                     st.session_state.selected_lat = alert['lat']
                                     st.session_state.selected_lon = alert['lon']
                                     st.rerun()
+                                st.markdown("</div>", unsafe_allow_html=True)
                             
                             # Use markdown button with custom HTML to ensure horizontal text
                             with btn_cols[1]:
@@ -306,9 +308,11 @@ def main():
                                 </button>
                                 """
                                 st.markdown(mark_read_html, unsafe_allow_html=True)
-                                # Hidden button for functionality
-                                if st.button(f"Mark Read", key=f"read_btn_{i}", help="Click to mark as read", label_visibility="collapsed"):
+                                # Hidden button for functionality (with minimal height to hide it)
+                                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                                if st.button(f"Mark Read", key=f"read_btn_{i}"):
                                     st.success(f"Alert marked as read")
+                                st.markdown("</div>", unsafe_allow_html=True)
                     
                     st.markdown("---")
             else:
@@ -331,11 +335,13 @@ def main():
                 </button>
                 """
                 st.markdown(mark_all_html, unsafe_allow_html=True)
-                # Hidden button for functionality
-                if st.button("Mark All as Read", key="mark_all_btn", label_visibility="collapsed"):
+                # Hidden button for functionality (with minimal height to hide it)
+                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                if st.button("Mark All as Read", key="mark_all_btn"):
                     st.success("All alerts marked as read")
                     st.session_state.notification_shown = False
                     time.sleep(1)
+                st.markdown("</div>", unsafe_allow_html=True)
             
             # Export Alerts button with custom HTML
             with col2:
@@ -351,9 +357,11 @@ def main():
                 </button>
                 """
                 st.markdown(export_html, unsafe_allow_html=True)
-                # Hidden button for functionality
-                if st.button("Export Alerts (CSV)", key="export_btn", label_visibility="collapsed"):
+                # Hidden button for functionality (with minimal height to hide it)
+                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                if st.button("Export Alerts (CSV)", key="export_btn"):
                     st.success("Alerts exported to CSV")
+                st.markdown("</div>", unsafe_allow_html=True)
             
             # Schedule Report button with custom HTML
             with col3:
@@ -369,9 +377,11 @@ def main():
                 </button>
                 """
                 st.markdown(schedule_html, unsafe_allow_html=True)
-                # Hidden button for functionality
-                if st.button("Schedule Report", key="schedule_btn", label_visibility="collapsed"):
+                # Hidden button for functionality (with minimal height to hide it)
+                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                if st.button("Schedule Report", key="schedule_btn"):
                     st.success("Weekly report scheduled")
+                st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("No deforestation alerts detected for the selected region and sensitivity level.")
     
@@ -459,13 +469,15 @@ def main():
                 """
                 st.markdown(play_html, unsafe_allow_html=True)
                 
-                # Hidden button for functionality
-                if st.button(play_label, key="play_timelapse", label_visibility="collapsed"):
+                # Hidden button for functionality (with minimal height to hide it)
+                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                if st.button(play_label, key="play_timelapse"):
                     st.session_state.playing_timelapse = not st.session_state.playing_timelapse
                     if st.session_state.playing_timelapse:
                         st.session_state.current_timelapse_year = selected_year_range[0]
                         # This will cause the app to rerun in the next cycle
                         st.rerun()
+                st.markdown("</div>", unsafe_allow_html=True)
             
             # Auto-advance the year if playing
             if st.session_state.playing_timelapse:
