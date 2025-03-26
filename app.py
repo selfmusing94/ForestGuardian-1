@@ -269,36 +269,108 @@ def main():
                         with cols[2]:
                             st.markdown(f"**Event**: {alert['description']}")
                             
-                            # Add action buttons for each alert
-                            btn_cols = st.columns([1, 1, 3])
+                            # Add action buttons for each alert with custom HTML to ensure horizontal text
+                            btn_cols = st.columns([4, 4, 3])
+                            
+                            # Use markdown button with custom HTML to ensure horizontal text
                             with btn_cols[0]:
-                                if st.button(f"View on Map", key=f"map_btn_{i}"):
+                                view_map_html = f"""
+                                <button 
+                                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
+                                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
+                                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                                    text-orientation:mixed !important;" 
+                                    onclick="document.getElementById('map_btn_{i}').click()">
+                                    View on Map
+                                </button>
+                                """
+                                st.markdown(view_map_html, unsafe_allow_html=True)
+                                # Hidden button for functionality
+                                if st.button(f"View on Map", key=f"map_btn_{i}", help="Click to view on map", label_visibility="collapsed"):
                                     st.session_state.selected_lat = alert['lat']
                                     st.session_state.selected_lon = alert['lon']
                                     st.rerun()
                             
+                            # Use markdown button with custom HTML to ensure horizontal text
                             with btn_cols[1]:
-                                if st.button(f"Mark Read", key=f"read_btn_{i}"):
+                                mark_read_html = f"""
+                                <button 
+                                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
+                                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
+                                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                                    text-orientation:mixed !important;" 
+                                    onclick="document.getElementById('read_btn_{i}').click()">
+                                    Mark Read
+                                </button>
+                                """
+                                st.markdown(mark_read_html, unsafe_allow_html=True)
+                                # Hidden button for functionality
+                                if st.button(f"Mark Read", key=f"read_btn_{i}", help="Click to mark as read", label_visibility="collapsed"):
                                     st.success(f"Alert marked as read")
                     
                     st.markdown("---")
             else:
                 st.info("No alerts match your current filter settings.")
             
-            # Action buttons for all alerts
+            # Action buttons for all alerts with custom HTML for horizontal text
             col1, col2, col3 = st.columns(3)
+            
+            # Mark All as Read button with custom HTML
             with col1:
-                if st.button("Mark All as Read"):
+                mark_all_html = f"""
+                <button 
+                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
+                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
+                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                    text-orientation:mixed !important;" 
+                    onclick="document.getElementById('mark_all_btn').click()">
+                    Mark All as Read
+                </button>
+                """
+                st.markdown(mark_all_html, unsafe_allow_html=True)
+                # Hidden button for functionality
+                if st.button("Mark All as Read", key="mark_all_btn", label_visibility="collapsed"):
                     st.success("All alerts marked as read")
                     st.session_state.notification_shown = False
                     time.sleep(1)
             
+            # Export Alerts button with custom HTML
             with col2:
-                if st.button("Export Alerts (CSV)"):
+                export_html = f"""
+                <button 
+                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
+                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
+                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                    text-orientation:mixed !important;" 
+                    onclick="document.getElementById('export_btn').click()">
+                    Export Alerts (CSV)
+                </button>
+                """
+                st.markdown(export_html, unsafe_allow_html=True)
+                # Hidden button for functionality
+                if st.button("Export Alerts (CSV)", key="export_btn", label_visibility="collapsed"):
                     st.success("Alerts exported to CSV")
             
+            # Schedule Report button with custom HTML
             with col3:
-                if st.button("Schedule Report"):
+                schedule_html = f"""
+                <button 
+                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
+                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
+                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                    text-orientation:mixed !important;" 
+                    onclick="document.getElementById('schedule_btn').click()">
+                    Schedule Report
+                </button>
+                """
+                st.markdown(schedule_html, unsafe_allow_html=True)
+                # Hidden button for functionality
+                if st.button("Schedule Report", key="schedule_btn", label_visibility="collapsed"):
                     st.success("Weekly report scheduled")
     else:
         st.info("No deforestation alerts detected for the selected region and sensitivity level.")
@@ -371,9 +443,24 @@ def main():
                 if 'current_timelapse_year' not in st.session_state:
                     st.session_state.current_timelapse_year = selected_year_range[0]
                 
-                # Toggle button for play/pause
+                # Toggle button for play/pause with custom HTML for horizontal text
                 play_label = "⏸️ Pause" if st.session_state.playing_timelapse else "▶️ Play"
-                if st.button(play_label, key="play_timelapse"):
+                
+                play_html = f"""
+                <button 
+                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
+                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
+                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                    text-orientation:mixed !important;" 
+                    onclick="document.getElementById('play_timelapse').click()">
+                    {play_label}
+                </button>
+                """
+                st.markdown(play_html, unsafe_allow_html=True)
+                
+                # Hidden button for functionality
+                if st.button(play_label, key="play_timelapse", label_visibility="collapsed"):
                     st.session_state.playing_timelapse = not st.session_state.playing_timelapse
                     if st.session_state.playing_timelapse:
                         st.session_state.current_timelapse_year = selected_year_range[0]
