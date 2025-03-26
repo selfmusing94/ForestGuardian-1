@@ -37,6 +37,12 @@ if 'alert_history' not in st.session_state:
 if 'view_history' not in st.session_state:
     st.session_state.view_history = {}
     
+if 'playing_timelapse' not in st.session_state:
+    st.session_state.playing_timelapse = False
+    
+if 'current_timelapse_year' not in st.session_state:
+    st.session_state.current_timelapse_year = 2015
+    
 # Apply custom CSS based on theme
 st.markdown(apply_theme_css(), unsafe_allow_html=True)
 
@@ -199,21 +205,27 @@ def main():
         )
     
     with col4:
+        # Get the new alerts count (it's a single value)
+        new_alerts_count = int(alert_data['new_alerts_count'].iloc[0]) if 'new_alerts_count' in alert_data else 0
+        
         st.metric(
             label="Recent Alerts", 
             value=len(alert_data),
-            delta=f"{alert_data['new_alerts_count']} new"
+            delta=f"{new_alerts_count} new"
         )
     
     # Enhanced Alerts section
     if len(alert_data) > 0:
+        # Get the new alerts count (it's a single value)
+        new_alerts_count = int(alert_data['new_alerts_count'].iloc[0]) if 'new_alerts_count' in alert_data else 0
+        
         # Show a notification for new alerts if not shown yet
-        if alert_data['new_alerts_count'] > 0 and not st.session_state.notification_shown:
+        if new_alerts_count > 0 and not st.session_state.notification_shown:
             st.balloons()
             st.session_state.notification_shown = True
             
         # Alert panel with color-coded styling
-        alert_header = f"⚠️ Recent Deforestation Alerts ({alert_data['new_alerts_count']} new)"
+        alert_header = f"⚠️ Recent Deforestation Alerts ({new_alerts_count} new)"
         with st.expander(alert_header, expanded=True):
             # Add filter options
             col1, col2 = st.columns(2)
@@ -326,16 +338,104 @@ def main():
             st.dataframe(risk_factors, hide_index=True, use_container_width=True)
     
         st.subheader("Time-Lapse Visualization")
-        year_for_timelapse = st.slider(
-            "Select year to view:",
-            min_value=selected_year_range[0],
-            max_value=selected_year_range[1],
-            value=selected_year_range[0]
-        )
         
-        timelapse_map = create_time_lapse_map(deforestation_data, year_for_timelapse)
-        folium_timelapse = timelapse_map._repr_html_()
-        st.components.v1.html(folium_timelapse, height=400)
+        # Create a container with enhanced styling
+        with st.container():
+            st.markdown("""
+            <div style="background-color: rgba(0,0,0,0.05); padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                <p>This time-lapse shows the progression of deforestation across years. 
+                Move the slider to see how forest cover has changed over time.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Interactive year selector with auto-play option
+            col1, col2 = st.columns([3, 1])
+            
+            with col1:
+                year_for_timelapse = st.slider(
+                    "Select year to view:",
+                    min_value=selected_year_range[0],
+                    max_value=selected_year_range[1],
+                    value=selected_year_range[0],
+                    key="timelapse_year_slider"
+                )
+            
+            with col2:
+                # Add auto-play feature
+                if 'playing_timelapse' not in st.session_state:
+                    st.session_state.playing_timelapse = False
+                    
+                if 'current_timelapse_year' not in st.session_state:
+                    st.session_state.current_timelapse_year = selected_year_range[0]
+                
+                # Toggle button for play/pause
+                play_label = "⏸️ Pause" if st.session_state.playing_timelapse else "▶️ Play"
+                if st.button(play_label, key="play_timelapse"):
+                    st.session_state.playing_timelapse = not st.session_state.playing_timelapse
+                    if st.session_state.playing_timelapse:
+                        st.session_state.current_timelapse_year = selected_year_range[0]
+                        # This will cause the app to rerun in the next cycle
+                        st.rerun()
+            
+            # Auto-advance the year if playing
+            if st.session_state.playing_timelapse:
+                if st.session_state.current_timelapse_year < selected_year_range[1]:
+                    st.session_state.current_timelapse_year += 1
+                    # Use this instead of the slider value when in auto-play mode
+                    year_for_timelapse = st.session_state.current_timelapse_year
+                    # Add small delay for animation effect
+                    time.sleep(1.5)
+                    # Rerun to show next year
+                    st.rerun()
+                else:
+                    # End of the time range, stop playing
+                    st.session_state.playing_timelapse = False
+            
+            # Show the year prominently
+            st.markdown(f"<h2 style='text-align: center;'>{year_for_timelapse}</h2>", unsafe_allow_html=True)
+            
+            # Create the map for the selected year
+            timelapse_map = create_time_lapse_map(deforestation_data, year_for_timelapse)
+            folium_timelapse = timelapse_map._repr_html_()
+            st.components.v1.html(folium_timelapse, height=450)
+            
+            # Show year-specific statistics below the map
+            col1, col2, col3 = st.columns(3)
+            
+            # Calculate year-specific values
+            year_data = deforestation_data['yearly_data'].get(year_for_timelapse, {})
+            prev_year_data = deforestation_data['yearly_data'].get(year_for_timelapse-1, year_data)
+            
+            # Total deforestation for the year
+            with col1:
+                year_loss = year_data.get('loss_hectares', 0)
+                prev_year_loss = prev_year_data.get('loss_hectares', year_loss)
+                percent_change = ((year_loss - prev_year_loss) / max(prev_year_loss, 1)) * 100
+                
+                st.metric(
+                    label=f"Deforestation in {year_for_timelapse}", 
+                    value=f"{year_loss:,.0f} ha",
+                    delta=f"{percent_change:.1f}% from previous year",
+                    delta_color="inverse"
+                )
+            
+            # Affected species
+            with col2:
+                affected_species = year_data.get('affected_species', 0)
+                st.metric(
+                    label="Affected Species", 
+                    value=affected_species
+                )
+            
+            # Primary cause
+            with col3:
+                primary_cause = year_data.get('primary_cause', 'Unknown')
+                primary_percentage = year_data.get('primary_cause_percentage', 0)
+                st.metric(
+                    label="Primary Driver", 
+                    value=primary_cause,
+                    delta=f"{primary_percentage}% of loss"
+                )
         
     with tab2:
         st.subheader("Biodiversity Impact Analysis")
