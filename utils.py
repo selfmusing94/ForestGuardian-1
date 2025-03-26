@@ -42,11 +42,45 @@ def apply_theme_css():
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
 
-        /* Nature theme gradients */
+        /* Animated nature theme gradients */
+        @keyframes gradientFlow {{
+            0% {{ background-position: 0% 50%; }}
+            50% {{ background-position: 100% 50%; }}
+            100% {{ background-position: 0% 50%; }}
+        }}
+
+        @keyframes colorPulse {{
+            0% {{ filter: hue-rotate(0deg); }}
+            50% {{ filter: hue-rotate(30deg); }}
+            100% {{ filter: hue-rotate(0deg); }}
+        }}
+
         :root {{
-            --forest-gradient: linear-gradient(135deg, #2ecc71, #27ae60);
-            --sunset-gradient: linear-gradient(135deg, #e67e22, #d35400);
-            --water-gradient: linear-gradient(135deg, #3498db, #2980b9);
+            --forest-gradient: linear-gradient(135deg, #2ecc71, #27ae60, #2ecc71);
+            --sunset-gradient: linear-gradient(135deg, #e67e22, #d35400, #e67e22);
+            --water-gradient: linear-gradient(135deg, #3498db, #2980b9, #3498db);
+            --live-gradient: linear-gradient(45deg, #2ecc71, #3498db, #e67e22, #2ecc71);
+        }}
+
+        /* Live theme base styling */
+        .stApp {{
+            background: var(--live-gradient) !important;
+            background-size: 400% 400% !important;
+            animation: gradientFlow 15s ease infinite, colorPulse 10s ease infinite !important;
+        }}
+
+        /* Animated containers */
+        div[data-testid="stContainer"], 
+        div[data-testid="stMetricValue"],
+        div[data-testid="stExpander"] {{
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }}
+
+        div[data-testid="stContainer"]:hover,
+        div[data-testid="stMetricValue"]:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }}
 
         /* Base font styling with enhanced nature theme */
