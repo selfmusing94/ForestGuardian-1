@@ -29,31 +29,39 @@ def get_current_theme():
             st.session_state.bg_color = "#FFFFFF"
             st.session_state.text_color = "#262730"
             st.session_state.secondary_bg_color = "#F0F2F6"
-    
+
     return st.session_state.theme
 
 def apply_theme_css():
     """Apply CSS based on the current theme"""
     theme = get_current_theme()
-    
+
     # Define CSS based on the current theme
     css = f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
-        
-        /* Base font styling */
+
+        /* Nature theme gradients */
+        :root {{
+            --forest-gradient: linear-gradient(135deg, #2ecc71, #27ae60);
+            --sunset-gradient: linear-gradient(135deg, #e67e22, #d35400);
+            --water-gradient: linear-gradient(135deg, #3498db, #2980b9);
+        }}
+
+        /* Base font styling with enhanced nature theme */
         .stApp, .stMarkdown, .stText {{
             font-family: 'Poppins', sans-serif !important;
+            background: linear-gradient(180deg, rgba(46, 204, 113, 0.05), rgba(39, 174, 96, 0.02));
         }}
-        
+
         /* Headings styling */
         h1, h2, h3, h4, h5, h6 {{
             font-family: 'Roboto Slab', serif !important;
             font-weight: 700 !important;
             letter-spacing: -0.5px;
         }}
-        
+
         /* Metric value styling */
         div[data-testid="stMetricValue"] {{
             font-family: 'Poppins', sans-serif !important;
@@ -65,13 +73,13 @@ def apply_theme_css():
             background-color: {st.session_state.bg_color};
             color: {st.session_state.text_color} !important;
         }}
-        
+
         /* Style for sidebar */
         section[data-testid="stSidebar"] {{
             background-color: {st.session_state.secondary_bg_color};
             color: {st.session_state.text_color} !important;
         }}
-        
+
         /* Light and dark mode specific text colors for all elements */
         .stTextInput label, .stTextInput input,
         .stSelectbox label, .stSelectbox div,
@@ -92,7 +100,7 @@ def apply_theme_css():
         div[data-testid="stExpander"] div p {{
             color: {st.session_state.text_color} !important;
         }}
-        
+
         /* Ensure expander content is visible */
         details, details[open] {{
             background-color: {st.session_state.secondary_bg_color};
@@ -101,83 +109,83 @@ def apply_theme_css():
             border-radius: 5px;
             border: 1px solid {'rgba(255,255,255,0.1)' if theme == 'dark' else 'rgba(0,0,0,0.1)'};
         }}
-        
+
         /* Ensure all text is visible */
         * {{
             color: {st.session_state.text_color} !important;
         }}
-        
+
         /* Set specific elements with their appropriate colors */
         a {{
            color: {'#8AB4F8' if theme == 'dark' else '#0D6EFD'} !important;
         }}
-        
+
         /* Improve data frame visibility */
         .stDataFrame div[data-testid="stTable"] {{
             background-color: {'rgba(255,255,255,0.05)' if theme == 'dark' else 'rgba(255,255,255,1)'};
             border-radius: 5px;
             padding: 2px;
         }}
-        
+
         .stDataFrame div[data-testid="stTable"] table {{
             color: {st.session_state.text_color} !important;
         }}
-        
+
         .stDataFrame div[data-testid="stTable"] th {{
             background-color: {'rgba(255,255,255,0.1)' if theme == 'dark' else 'rgba(240,242,246,1)'};
             color: {st.session_state.text_color} !important;
             font-weight: bold;
         }}
-        
+
         .stDataFrame div[data-testid="stTable"] td {{
             background-color: {'rgba(255,255,255,0.05)' if theme == 'dark' else 'rgba(255,255,255,1)'};
             color: {st.session_state.text_color} !important;
         }}
-        
+
         /* Tabs styling */
         .stTabs [data-baseweb="tab-list"] {{
             background-color: {st.session_state.secondary_bg_color};
         }}
-        
+
         .stTabs [data-baseweb="tab"] {{
             color: {st.session_state.text_color} !important;
             font-weight: bold;
         }}
-        
+
         /* Metric styling */
         div[data-testid="stMetricValue"], span[data-testid="stMetricValue"] {{
             font-size: 1.5rem !important;
             font-weight: bold !important;
             color: {st.session_state.text_color} !important;
         }}
-        
+
         div[data-testid="stMetricLabel"], span[data-testid="stMetricLabel"] {{
             color: {st.session_state.text_color} !important;
         }}
-        
+
         div[data-testid="stMetricDelta"], span[data-testid="stMetricDelta"] {{
             font-weight: bold !important;
         }}
-        
+
         /* Better contrast for elements in dark mode */
         .stSelectbox div, .stMultiSelect div {{
             background-color: {'rgba(255,255,255,0.1)' if theme == 'dark' else 'transparent'};
             border-radius: 5px;
             color: {st.session_state.text_color} !important;
         }}
-        
+
         /* Improve select dropdown visibility */
         div[data-baseweb="select"] {{
             background-color: {'rgba(255,255,255,0.1)' if theme == 'dark' else 'transparent'};
             color: {st.session_state.text_color} !important;
             border-radius: 5px;
         }}
-        
+
         div[data-baseweb="select"] option {{
             background-color: {'#1E1E1E' if theme == 'dark' else '#FFFFFF'};
             color: {st.session_state.text_color} !important;
         }}
-        
+
         /* Improved container styling */
         div[data-testid="stContainer"] {{
             background-color: {'rgba(255,255,255,0.05)' if theme == 'dark' else 'rgba(0,0,0,0.02)'};
@@ -185,14 +193,14 @@ def apply_theme_css():
             border-radius: 5px;
             border: 1px solid {'rgba(255,255,255,0.1)' if theme == 'dark' else 'rgba(0,0,0,0.05)'};
         }}
-        
+
         /* Map container styling */
         .map-container {{
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }}
-        
+
         /* Fix for vertical text in Folium maps and other elements */
         .leaflet-container .leaflet-control-layers,
         .leaflet-control, 
@@ -218,43 +226,43 @@ def apply_theme_css():
             direction: ltr !important;
             text-rendering: auto !important;
         }}
-        
+
         /* Info box styling */
         div[data-testid="stAlert"] {{
             background-color: {'rgba(66, 150, 250, 0.2)' if theme == 'dark' else 'rgba(66, 150, 250, 0.1)'};
             color: {'#8AB4F8' if theme == 'dark' else '#1E5A96'} !important;
         }}
-        
+
         div[data-testid="stAlert"] p {{
             color: {'#FFFFFF' if theme == 'dark' else '#1E5A96'} !important;
         }}
-        
+
         /* Success message styling */
         div[data-testid="stSuccessMessage"] {{
             background-color: {'rgba(45, 200, 65, 0.2)' if theme == 'dark' else 'rgba(45, 200, 65, 0.1)'};
             color: {'#A7F3D0' if theme == 'dark' else '#047857'} !important;
         }}
-        
+
         div[data-testid="stSuccessMessage"] p {{
             color: {'#FFFFFF' if theme == 'dark' else '#047857'} !important;
         }}
-        
+
         /* Risk level styling with brighter colors for dark mode */
         .risk-high {{
             color: {'#FF6B6B' if theme == 'dark' else '#E53935'} !important;
             font-weight: bold;
         }}
-        
+
         .risk-medium {{
             color: {'#FFD166' if theme == 'dark' else '#FB8C00'} !important;
             font-weight: bold;
         }}
-        
+
         .risk-low {{
             color: {'#A7F3D0' if theme == 'dark' else '#388E3C'} !important;
             font-weight: bold;
         }}
-        
+
         /* Alert badge styling */
         .alert-badge {{
             background-color: {'#FF6B6B' if theme == 'dark' else '#FF5252'};
@@ -265,13 +273,13 @@ def apply_theme_css():
             margin-left: 6px;
             font-weight: bold;
         }}
-        
+
         /* Tooltip styling */
         .tooltip {{
             position: relative;
             display: inline-block;
         }}
-        
+
         .tooltip .tooltiptext {{
             visibility: hidden;
             width: 120px;
@@ -288,23 +296,52 @@ def apply_theme_css():
             opacity: 0;
             transition: opacity 0.3s;
         }}
-        
+
         .tooltip:hover .tooltiptext {{
             visibility: visible;
             opacity: 1;
         }}
-        
+
         /* Animation for icons */
         .animated-icon {{
             animation: pulse 2s infinite;
         }}
-        
+
         @keyframes pulse {{
             0% {{ opacity: 1; }}
             50% {{ opacity: 0.5; }}
             100% {{ opacity: 1; }}
         }}
-        
+
+        /* Nature-themed buttons */
+        .stButton > button {{
+            background: var(--forest-gradient) !important;
+            color: white !important;
+            border: none !important;
+            transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+        }}
+
+        .stButton > button:hover {{
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3) !important;
+        }}
+
+        /* Metric containers with forest theme */
+        div[data-testid="stMetricValue"] {{
+            background: var(--forest-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold !important;
+        }}
+
+        /* Enhanced alerts styling */
+        div[data-testid="stExpander"] {{
+            border-left: 4px solid #2ecc71;
+            transition: all 0.3s ease;
+        }}
+
+        /* Animated text styles */
+
         /* Button styling */
         button, .stButton>button {{
             background-color: {'#2E2E2E' if theme == 'dark' else '#F0F2F6'};
@@ -319,13 +356,13 @@ def apply_theme_css():
             word-spacing: normal !important;
             font-family: 'Arial', sans-serif !important;
         }}
-        
+
         button:hover, .stButton>button:hover {{
             background-color: {'#3E3E3E' if theme == 'dark' else '#E6E9EF'};
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }}
-        
+
         /* Ensure button text is always horizontal and properly displayed */
         .stButton button p,
         .stButton button span,
@@ -341,16 +378,16 @@ def apply_theme_css():
             display: block !important;
             font-family: 'Arial', sans-serif !important;
         }}
-        
+
         /* Slider styling */
         .stSlider {{
             padding-top: 2rem;
         }}
-        
+
         .stSlider div[data-baseweb="slider"] {{
             margin-top: 1rem;
         }}
-        
+
         /* Footer styling */
         .st-emotion-cache-164nlkn {{
             background-color: {'#1E1E1E' if theme == 'dark' else '#F0F2F6'};
@@ -358,7 +395,7 @@ def apply_theme_css():
         }}
     </style>
     """
-    
+
     # Return the CSS
     return css
 
@@ -388,14 +425,14 @@ def risk_level_html(risk_score):
     """Return HTML with appropriate risk styling"""
     level = risk_level_text(risk_score)
     css_class = ""
-    
+
     if risk_score < 30:
         css_class = "risk-low"
     elif risk_score < 70:
         css_class = "risk-medium"
     else:
         css_class = "risk-high"
-    
+
     return f'<span class="{css_class}">{level}</span>'
 
 def calculate_percentage_change(old_value, new_value):
@@ -415,7 +452,7 @@ def get_time_since(timestamp):
     """Return a human-readable string of time since the given timestamp"""
     now = datetime.now()
     delta = now - timestamp
-    
+
     if delta.days > 0:
         return f"{delta.days} day{'s' if delta.days > 1 else ''} ago"
     elif delta.seconds >= 3600:
