@@ -251,87 +251,113 @@ def main():
                     severity_color = "red" if alert['severity'] == "High" else "orange" if alert['severity'] == "Medium" else "green"
                     severity_icon = "🔴" if alert['severity'] == "High" else "🟠" if alert['severity'] == "Medium" else "🟢"
                     
-                    # Create an alert card with custom styling
-                    with st.container():
-                        cols = st.columns([1, 2, 5])
-                        # Format date to show relative time (e.g., "2 days ago")
-                        time_ago = get_time_since(alert['date'])
-                        
-                        with cols[0]:
-                            st.markdown(f"<h3>{severity_icon}</h3>", unsafe_allow_html=True)
-                            st.markdown(f"<span style='color:{severity_color};font-weight:bold;'>{alert['severity']}</span>", unsafe_allow_html=True)
-                            
-                        with cols[1]:
-                            st.markdown(f"**Location**: {alert['location']}")
-                            st.markdown(f"**Detected**: {time_ago}")
-                            st.markdown(f"**Area**: {alert['area_hectares']:.1f} ha")
-                        
-                        with cols[2]:
-                            st.markdown(f"**Event**: {alert['description']}")
-                            
-                            # Add action buttons for each alert with custom HTML to ensure horizontal text
-                            btn_cols = st.columns([4, 4, 3])
-                            
-                            # Use markdown button with custom HTML to ensure horizontal text
-                            with btn_cols[0]:
-                                view_map_html = f"""
-                                <button 
-                                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
-                                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
-                                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
-                                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                                    text-orientation:mixed !important;" 
-                                    onclick="document.getElementById('map_btn_{i}').click()">
-                                    View on Map
-                                </button>
-                                """
-                                st.markdown(view_map_html, unsafe_allow_html=True)
-                                # Hidden button for functionality (with minimal height to hide it)
-                                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
-                                if st.button(f"View on Map", key=f"map_btn_{i}"):
-                                    st.session_state.selected_lat = alert['lat']
-                                    st.session_state.selected_lon = alert['lon']
-                                    st.rerun()
-                                st.markdown("</div>", unsafe_allow_html=True)
-                            
-                            # Use markdown button with custom HTML to ensure horizontal text
-                            with btn_cols[1]:
-                                mark_read_html = f"""
-                                <button 
-                                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
-                                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
-                                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
-                                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                                    text-orientation:mixed !important;" 
-                                    onclick="document.getElementById('read_btn_{i}').click()">
-                                    Mark Read
-                                </button>
-                                """
-                                st.markdown(mark_read_html, unsafe_allow_html=True)
-                                # Hidden button for functionality (with minimal height to hide it)
-                                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
-                                if st.button(f"Mark Read", key=f"read_btn_{i}"):
-                                    st.success(f"Alert marked as read")
-                                st.markdown("</div>", unsafe_allow_html=True)
+                    # Create an enhanced alert card with custom styling
+                    current_theme = get_current_theme()
+                    bg_color = "rgba(255,255,255,0.05)" if current_theme == "dark" else "rgba(0,0,0,0.02)"
+                    border_color = "rgba(255,255,255,0.1)" if current_theme == "dark" else "rgba(0,0,0,0.05)"
                     
-                    st.markdown("---")
+                    # Format date to show relative time (e.g., "2 days ago")
+                    time_ago = get_time_since(alert['date'])
+                    
+                    # Create a card-style container for each alert
+                    st.markdown(f"""
+                    <div style="background-color: {bg_color}; border: 1px solid {border_color}; 
+                         border-left: 5px solid {severity_color}; border-radius: 5px; 
+                         padding: 15px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="font-size: 24px; margin-right: 10px;">{severity_icon}</div>
+                            <div>
+                                <span style="color:{severity_color}; font-weight:bold; font-size: 18px;">{alert['severity']} Alert</span>
+                                <span style="margin-left: 15px; opacity: 0.7; font-size: 14px;">Detected {time_ago}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-left: 5px; margin-bottom: 10px;">
+                            <div style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">{alert['location']}</div>
+                            <div style="margin-bottom: 5px;">{alert['description']}</div>
+                            <div style="font-size: 14px; opacity: 0.8;">Affected Area: {alert['area_hectares']:.1f} hectares</div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Add action buttons below the card with better spacing
+                    btn_cols = st.columns([1, 1, 2])
+                    
+                    # Use markdown button with custom HTML to ensure horizontal text
+                    with btn_cols[0]:
+                        view_map_html = f"""
+                        <button 
+                            style="width:100%; padding:8px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
+                            color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
+                            border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
+                            border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                            text-orientation:mixed !important;" 
+                            onclick="document.getElementById('map_btn_{i}').click()">
+                            🗺️ View on Map
+                        </button>
+                        """
+                        st.markdown(view_map_html, unsafe_allow_html=True)
+                        # Hidden button for functionality (with minimal height to hide it)
+                        st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                        if st.button(f"View on Map", key=f"map_btn_{i}"):
+                            st.session_state.selected_lat = alert['lat']
+                            st.session_state.selected_lon = alert['lon']
+                            st.rerun()
+                        st.markdown("</div>", unsafe_allow_html=True)
+                    
+                    # Use markdown button with custom HTML to ensure horizontal text
+                    with btn_cols[1]:
+                        mark_read_html = f"""
+                        <button 
+                            style="width:100%; padding:8px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
+                            color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
+                            border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
+                            border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
+                            text-orientation:mixed !important;" 
+                            onclick="document.getElementById('read_btn_{i}').click()">
+                            ✓ Mark Read
+                        </button>
+                        """
+                        st.markdown(mark_read_html, unsafe_allow_html=True)
+                        # Hidden button for functionality (with minimal height to hide it)
+                        st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
+                        if st.button(f"Mark Read", key=f"read_btn_{i}"):
+                            st.success(f"Alert marked as read")
+                        st.markdown("</div>", unsafe_allow_html=True)
+                    
+                    # No need for horizontal line since we're using card-style design
+                    st.markdown("<div style='height: 5px;'></div>", unsafe_allow_html=True)
             else:
                 st.info("No alerts match your current filter settings.")
             
-            # Action buttons for all alerts with custom HTML for horizontal text
+            # Action buttons for all alerts with enhanced styling
+            st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+            
+            # Create a nice container for the action buttons
+            current_theme = get_current_theme()
+            bg_color = "rgba(255,255,255,0.05)" if current_theme == "dark" else "rgba(0,0,0,0.02)"
+            border_color = "rgba(255,255,255,0.1)" if current_theme == "dark" else "rgba(0,0,0,0.05)"
+            
+            st.markdown(f"""
+            <div style="background-color: {bg_color}; border: 1px solid {border_color}; 
+                border-radius: 5px; padding: 15px; margin-bottom: 15px;">
+                <div style="font-weight: bold; margin-bottom: 10px; font-size: 16px;">Alert Management</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
             col1, col2, col3 = st.columns(3)
             
-            # Mark All as Read button with custom HTML
+            # Mark All as Read button with custom HTML and improved styling
             with col1:
                 mark_all_html = f"""
                 <button 
-                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
-                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
-                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                    style="width:100%; padding:10px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
+                    color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
+                    border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
                     border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                    text-orientation:mixed !important;" 
+                    text-orientation:mixed !important; font-weight:bold;" 
                     onclick="document.getElementById('mark_all_btn').click()">
-                    Mark All as Read
+                    ✓ Mark All as Read
                 </button>
                 """
                 st.markdown(mark_all_html, unsafe_allow_html=True)
@@ -343,17 +369,17 @@ def main():
                     time.sleep(1)
                 st.markdown("</div>", unsafe_allow_html=True)
             
-            # Export Alerts button with custom HTML
+            # Export Alerts button with custom HTML and improved styling
             with col2:
                 export_html = f"""
                 <button 
-                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
-                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
-                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                    style="width:100%; padding:10px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
+                    color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
+                    border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
                     border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                    text-orientation:mixed !important;" 
+                    text-orientation:mixed !important; font-weight:bold;" 
                     onclick="document.getElementById('export_btn').click()">
-                    Export Alerts (CSV)
+                    📊 Export Alerts (CSV)
                 </button>
                 """
                 st.markdown(export_html, unsafe_allow_html=True)
@@ -363,17 +389,17 @@ def main():
                     st.success("Alerts exported to CSV")
                 st.markdown("</div>", unsafe_allow_html=True)
             
-            # Schedule Report button with custom HTML
+            # Schedule Report button with custom HTML and improved styling
             with col3:
                 schedule_html = f"""
                 <button 
-                    style="width:100%; padding:8px; background-color:{'#2E2E2E' if get_current_theme() == 'dark' else '#F0F2F6'}; 
-                    color:{'#FFFFFF' if get_current_theme() == 'dark' else '#262730'}; 
-                    border:1px solid {'rgba(255,255,255,0.2)' if get_current_theme() == 'dark' else 'rgba(0,0,0,0.1)'};
+                    style="width:100%; padding:10px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
+                    color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
+                    border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
                     border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                    text-orientation:mixed !important;" 
+                    text-orientation:mixed !important; font-weight:bold;" 
                     onclick="document.getElementById('schedule_btn').click()">
-                    Schedule Report
+                    📅 Schedule Report
                 </button>
                 """
                 st.markdown(schedule_html, unsafe_allow_html=True)
