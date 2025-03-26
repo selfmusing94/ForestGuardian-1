@@ -102,14 +102,33 @@ def apply_theme_css():
             font-weight: 600 !important;
             letter-spacing: -0.5px;
         }}
-        /* Enhanced sidebar styling */
-        section[data-testid="stSidebar"] {{
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1)) !important;
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
-            animation: sidebarEntrance 0.5s ease-out;
-        }}
+        /* Enhanced sidebar styling with glass effect */
+        section[data-testid="stSidebar"] {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(52, 152, 219, 0.15)) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+            box-shadow: 10px 0 20px rgba(0, 0, 0, 0.2) !important;
+            animation: sidebarEntrance 0.6s ease-out;
+        }
+
+        /* Enhance sidebar content */
+        section[data-testid="stSidebar"] .block-container {
+            background: rgba(255, 255, 255, 0.05) !important;
+            padding: 2.5rem 1.5rem !important;
+            border-radius: 15px !important;
+            margin: 10px !important;
+        }
+
+        /* Sidebar title animation */
+        section[data-testid="stSidebar"] h1 {
+            background: linear-gradient(45deg, #2ecc71, #3498db) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            animation: titleGlow 3s ease-in-out infinite !important;
+            font-size: 1.8em !important;
+            margin-bottom: 1.5rem !important;
+        }
 
         @keyframes sidebarEntrance {{
             from {{
@@ -676,7 +695,7 @@ def calculate_risk_color(risk_score):
     """Return a color based on risk score"""
     if risk_score < 30:
         return "green"
-    elif risk_score < 70:
+    elif risk_score< 70:
         return "orange"
     else:
         return "red"
