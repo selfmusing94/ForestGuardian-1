@@ -12,3 +12,6 @@ font = "sans serif"
 
 [browser]
 gatherUsageStats = false
+
+[logger]
+level = "error"

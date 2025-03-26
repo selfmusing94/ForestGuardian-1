@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime, timedelta
 
 # Import custom modules
-from utils import toggle_theme, get_current_theme
+from utils import toggle_theme, get_current_theme, apply_theme_css, risk_level_html, show_notification, get_time_since
 from data_processor import load_deforestation_data, load_biodiversity_data, load_alert_data
 from map_visualization import create_map, create_time_lapse_map
 from charts import plot_deforestation_trend, plot_biodiversity_impact, plot_risk_distribution
@@ -18,9 +18,55 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Initialize session state for theme
+# Initialize session state variables
 if 'theme' not in st.session_state:
     st.session_state.theme = 'light'
+
+if 'notification_shown' not in st.session_state:
+    st.session_state.notification_shown = False
+    
+if 'selected_lat' not in st.session_state:
+    st.session_state.selected_lat = None
+    
+if 'selected_lon' not in st.session_state:
+    st.session_state.selected_lon = None
+    
+if 'alert_history' not in st.session_state:
+    st.session_state.alert_history = []
+    
+if 'view_history' not in st.session_state:
+    st.session_state.view_history = {}
+    
+# Apply custom CSS based on theme
+st.markdown(apply_theme_css(), unsafe_allow_html=True)
+
+# Add custom JavaScript for smoother animations
+js = """
+<script>
+    // Add smooth transitions to elements
+    document.addEventListener("DOMContentLoaded", function() {
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .stButton button, .stSelectbox, .stSlider, .stNumberInput, 
+            .element-container, .stTab, .stTabs {
+                transition: all 0.3s ease;
+            }
+            
+            .stApp div {
+                transition: background-color 0.3s ease;
+            }
+            
+            /* Hover effect for buttons */
+            .stButton button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+"""
+st.markdown(js, unsafe_allow_html=True)
 
 def main():
     # Sidebar
@@ -29,20 +75,33 @@ def main():
         st.title("Forest Guardian")
         st.subheader("Deforestation & Biodiversity Dashboard")
         
-        # Theme toggle
+        # Theme toggle with icon
         current_theme = get_current_theme()
-        if st.button("Toggle Theme 🌓", key="theme_toggle"):
+        theme_icon = "🌙" if current_theme == "light" else "☀️"
+        theme_text = f"Switch to {'Dark' if current_theme == 'light' else 'Light'} Mode {theme_icon}"
+        
+        if st.button(theme_text, key="theme_toggle"):
             toggle_theme()
             st.rerun()
         
         st.markdown("---")
         
-        # Region filter
+        # Region filter with map icons
         regions = ["Amazon", "Congo Basin", "Southeast Asia", "Central America", "Global"]
-        selected_region = st.selectbox("Select Region:", regions)
+        region_icons = {
+            "Amazon": "🌴",
+            "Congo Basin": "🌍", 
+            "Southeast Asia": "🌏",
+            "Central America": "🌎",
+            "Global": "🌐"
+        }
+        
+        region_options = [f"{region_icons.get(r, '')} {r}" for r in regions]
+        selected_region_with_icon = st.selectbox("Select Region:", region_options)
+        selected_region = selected_region_with_icon.split(" ", 1)[1] if " " in selected_region_with_icon else selected_region_with_icon
         
         # Time period filter
-        st.subheader("Time Period")
+        st.subheader("🕒 Time Period")
         years = list(range(2015, datetime.now().year + 1))
         selected_year_range = st.select_slider(
             "Select Year Range:",
@@ -50,30 +109,56 @@ def main():
             value=(years[0], years[-1])
         )
         
-        # Layer toggles for map
-        st.subheader("Map Layers")
-        show_deforestation = st.checkbox("Deforestation Heatmap", value=True)
-        show_protected_areas = st.checkbox("Protected Areas", value=True)
-        show_risk_zones = st.checkbox("Risk Zones", value=True)
+        # Map layer controls with icons
+        st.subheader("🗺️ Map Layers")
+        show_deforestation = st.checkbox("🔥 Deforestation Heatmap", value=True)
+        show_protected_areas = st.checkbox("🟦 Protected Areas", value=True)
+        show_risk_zones = st.checkbox("⚠️ Risk Zones", value=True)
         
-        # Alert settings
-        st.subheader("Alert Settings")
+        # Alert settings with visual elements
+        st.subheader("🚨 Alert Settings")
         alert_threshold = st.select_slider(
             "Alert Sensitivity:",
             options=["Low", "Medium", "High"],
             value="Medium"
         )
         
-        notify_email = st.checkbox("Email Notifications", value=False)
+        # Show alert threshold visualization
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if alert_threshold == "Low":
+                st.markdown("✅")
+            else:
+                st.markdown("⬜")
+            st.caption("Low")
+        with col2:
+            if alert_threshold == "Medium":
+                st.markdown("✅")
+            else:
+                st.markdown("⬜")
+            st.caption("Medium")
+        with col3:
+            if alert_threshold == "High":
+                st.markdown("✅")
+            else:
+                st.markdown("⬜")
+            st.caption("High")
+        
+        # Notification settings
+        notify_email = st.checkbox("📧 Email Notifications", value=False)
         if notify_email:
             email = st.text_input("Email Address")
+            if email:
+                st.success("Email notifications enabled")
         
-        notify_sms = st.checkbox("SMS Notifications", value=False)
+        notify_sms = st.checkbox("📱 SMS Notifications", value=False)
         if notify_sms:
             phone = st.text_input("Phone Number")
+            if phone:
+                st.success("SMS notifications enabled")
             
         st.markdown("---")
-        st.info("Dashboard updates every 24 hours with new satellite data.")
+        st.info("🔄 Dashboard updates every 24 hours with new satellite data from global monitoring stations.")
 
     # Main content
     # Load data based on filters
@@ -120,18 +205,91 @@ def main():
             delta=f"{alert_data['new_alerts_count']} new"
         )
     
-    # Alerts section
+    # Enhanced Alerts section
     if len(alert_data) > 0:
-        with st.expander("⚠️ Recent Deforestation Alerts", expanded=True):
-            st.dataframe(
-                alert_data[['date', 'location', 'severity', 'area_hectares', 'description']],
-                use_container_width=True,
-                hide_index=True
-            )
+        # Show a notification for new alerts if not shown yet
+        if alert_data['new_alerts_count'] > 0 and not st.session_state.notification_shown:
+            st.balloons()
+            st.session_state.notification_shown = True
             
-            if st.button("Mark All as Read"):
-                st.success("All alerts marked as read")
-                time.sleep(1)
+        # Alert panel with color-coded styling
+        alert_header = f"⚠️ Recent Deforestation Alerts ({alert_data['new_alerts_count']} new)"
+        with st.expander(alert_header, expanded=True):
+            # Add filter options
+            col1, col2 = st.columns(2)
+            with col1:
+                severity_filter = st.multiselect("Filter by Severity:", 
+                    options=["High", "Medium", "Low"], 
+                    default=["High", "Medium", "Low"])
+            
+            with col2:
+                days_filter = st.slider("Show alerts from the last X days:", 
+                    min_value=1, max_value=30, value=30)
+            
+            # Filter alerts based on user selection
+            filtered_alerts = alert_data[
+                (alert_data['severity'].isin(severity_filter)) & 
+                ((datetime.now() - alert_data['date']).dt.days <= days_filter)
+            ]
+            
+            if len(filtered_alerts) > 0:
+                # Create custom dataframe display
+                for i, alert in filtered_alerts.iterrows():
+                    # Determine severity color and icon
+                    severity_color = "red" if alert['severity'] == "High" else "orange" if alert['severity'] == "Medium" else "green"
+                    severity_icon = "🔴" if alert['severity'] == "High" else "🟠" if alert['severity'] == "Medium" else "🟢"
+                    
+                    # Create an alert card with custom styling
+                    with st.container():
+                        cols = st.columns([1, 2, 5])
+                        # Format date to show relative time (e.g., "2 days ago")
+                        time_ago = get_time_since(alert['date'])
+                        
+                        with cols[0]:
+                            st.markdown(f"<h3>{severity_icon}</h3>", unsafe_allow_html=True)
+                            st.markdown(f"<span style='color:{severity_color};font-weight:bold;'>{alert['severity']}</span>", unsafe_allow_html=True)
+                            
+                        with cols[1]:
+                            st.markdown(f"**Location**: {alert['location']}")
+                            st.markdown(f"**Detected**: {time_ago}")
+                            st.markdown(f"**Area**: {alert['area_hectares']:.1f} ha")
+                        
+                        with cols[2]:
+                            st.markdown(f"**Event**: {alert['description']}")
+                            
+                            # Add action buttons for each alert
+                            btn_cols = st.columns([1, 1, 3])
+                            with btn_cols[0]:
+                                if st.button(f"View on Map", key=f"map_btn_{i}"):
+                                    st.session_state.selected_lat = alert['lat']
+                                    st.session_state.selected_lon = alert['lon']
+                                    st.rerun()
+                            
+                            with btn_cols[1]:
+                                if st.button(f"Mark Read", key=f"read_btn_{i}"):
+                                    st.success(f"Alert marked as read")
+                    
+                    st.markdown("---")
+            else:
+                st.info("No alerts match your current filter settings.")
+            
+            # Action buttons for all alerts
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                if st.button("Mark All as Read"):
+                    st.success("All alerts marked as read")
+                    st.session_state.notification_shown = False
+                    time.sleep(1)
+            
+            with col2:
+                if st.button("Export Alerts (CSV)"):
+                    st.success("Alerts exported to CSV")
+            
+            with col3:
+                if st.button("Schedule Report"):
+                    st.success("Weekly report scheduled")
+    else:
+        st.info("No deforestation alerts detected for the selected region and sensitivity level.")
     
     # Tab-based layout for main content
     tab1, tab2, tab3 = st.tabs(["Interactive Map", "Biodiversity Impact", "Analysis & Trends"])

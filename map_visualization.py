@@ -42,11 +42,17 @@ def create_map(deforestation_data, layers):
     if layers.get('deforestation', True):
         # Extract hotspot data
         hotspots = deforestation_data['hotspots']
-        heat_data = [[spot['lat'], spot['lon'], spot['area_hectares']] for spot in hotspots]
+        heat_data = []
+        for spot in hotspots:
+            heat_data.append([
+                spot['lat'], 
+                spot['lon'], 
+                float(spot['area_hectares']) / 1000  # Scale down for better visualization
+            ])
         
         # Create heatmap layer
         HeatMap(
-            heat_data,
+            data=heat_data,
             radius=15,
             gradient={0.4: 'blue', 0.65: 'yellow', 1: 'red'},
             name="Deforestation Heatmap",
