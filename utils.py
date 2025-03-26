@@ -299,23 +299,25 @@ def apply_theme_css():
 
         /* Alert box animation */
         @keyframes alertPulse {{
-            0% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7); }}
-            70% {{ transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 82, 82, 0); }}
-            100% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }}
+            0% {{ transform: scale(1); background-position: 0% 50%; }}
+            50% {{ transform: scale(1.05); background-position: 100% 50%; }}
+            100% {{ transform: scale(1); background-position: 0% 50%; }}
         }}
 
         /* Alert badge styling */
         .alert-badge {{
-            background: linear-gradient(45deg, #FF6B6B, #FF5252);
+            background: var(--live-gradient);
+            background-size: 200% 200%;
             color: white !important;
             padding: 5px 12px;
             border-radius: 15px;
             font-size: 13px;
             margin-left: 8px;
             font-weight: bold;
-            box-shadow: 0 2px 10px rgba(255, 82, 82, 0.3);
-            animation: alertPulse 2s infinite;
+            box-shadow: 0 2px 15px rgba(52, 152, 219, 0.3);
+            animation: alertPulse 3s infinite, gradientFlow 15s ease infinite, colorPulse 10s ease infinite;
             display: inline-block;
+            backdrop-filter: blur(5px);
             transition: all 0.3s ease;
         }}
 
