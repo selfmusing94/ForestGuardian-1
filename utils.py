@@ -39,6 +39,27 @@ def apply_theme_css():
     # Define CSS based on the current theme
     css = f"""
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
+        
+        /* Base font styling */
+        .stApp, .stMarkdown, .stText {{
+            font-family: 'Poppins', sans-serif !important;
+        }}
+        
+        /* Headings styling */
+        h1, h2, h3, h4, h5, h6 {{
+            font-family: 'Roboto Slab', serif !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.5px;
+        }}
+        
+        /* Metric value styling */
+        div[data-testid="stMetricValue"] {{
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 600 !important;
+            letter-spacing: -0.5px;
+        }}
         /* Base app styling */
         .stApp {{
             background-color: {st.session_state.bg_color};
