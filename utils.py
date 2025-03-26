@@ -454,27 +454,27 @@ def apply_theme_css():
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             margin: 10px 0;
             transition: all 0.3s ease !important;
-        }
+        }}
 
-        div[data-testid="stExpander"]:hover {
+        div[data-testid="stExpander"]:hover {{
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(46, 204, 113, 0.4) !important;
-        }
+        }}
 
         /* Alert content styling */
-        div[data-testid="stExpander"] > div {
+        div[data-testid="stExpander"] > div {{
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.1) 100%);
             border-radius: 8px;
             padding: 15px !important;
             margin-top: 10px;
-        }
+        }}
 
         /* Alert header styling */
-        div[data-testid="stExpander"] > div:first-child {
+        div[data-testid="stExpander"] > div:first-child {{
             border-bottom: 1px solid rgba(46, 204, 113, 0.2);
             padding-bottom: 10px !important;
-        }
+        }}
     </style>
     """
 
