@@ -176,14 +176,72 @@ def apply_theme_css():
             color: {st.session_state.text_color} !important;
         }}
 
-        /* Tabs styling */
+        /* Enhanced Tabs styling */
         .stTabs [data-baseweb="tab-list"] {{
-            background-color: {st.session_state.secondary_bg_color};
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1)) !important;
+            border-radius: 10px;
+            padding: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
         }}
 
         .stTabs [data-baseweb="tab"] {{
             color: {st.session_state.text_color} !important;
             font-weight: bold;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 0 5px;
+            padding: 8px 16px;
+        }}
+
+        .stTabs [data-baseweb="tab"]:hover {{
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(52, 152, 219, 0.2));
+            transform: translateY(-2px);
+        }}
+
+        .stTabs [data-baseweb="tab"][aria-selected="true"] {{
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(52, 152, 219, 0.3));
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }}
+
+        /* Map container enhancement */
+        .element-container:has(iframe) {{
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }}
+
+        /* Plotly chart container styling */
+        .stPlotlyChart {{
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }}
+
+        .stPlotlyChart:hover {{
+            transform: translateY(-5px);
+        }}
+
+        /* Analysis section enhancement */
+        div[data-testid="stContainer"] {{
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.05), rgba(52, 152, 219, 0.05));
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }}
+
+        div[data-testid="stContainer"]:hover {{
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }}
 
         /* Metric styling */
