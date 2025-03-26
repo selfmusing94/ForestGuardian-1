@@ -297,15 +297,31 @@ def apply_theme_css():
             font-weight: bold;
         }}
 
+        /* Alert box animation */
+        @keyframes alertPulse {{
+            0% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7); }}
+            70% {{ transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 82, 82, 0); }}
+            100% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }}
+        }}
+
         /* Alert badge styling */
         .alert-badge {{
-            background-color: {'#FF6B6B' if theme == 'dark' else '#FF5252'};
+            background: linear-gradient(45deg, #FF6B6B, #FF5252);
             color: white !important;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-left: 6px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            margin-left: 8px;
             font-weight: bold;
+            box-shadow: 0 2px 10px rgba(255, 82, 82, 0.3);
+            animation: alertPulse 2s infinite;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }}
+
+        .alert-badge:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 82, 82, 0.4);
         }}
 
         /* Tooltip styling */
