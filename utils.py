@@ -506,15 +506,37 @@ def apply_theme_css():
 
         /* Enhanced expander styling for alerts */
         div[data-testid="stExpander"] {{
-            background: linear-gradient(45deg, rgba(46, 204, 113, 0.15), rgba(52, 152, 219, 0.15), rgba(155, 89, 182, 0.15)) !important;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2)) !important;
             background-size: 300% 300% !important;
-            border-radius: 10px !important;
-            border: 1px solid rgba(46, 204, 113, 0.3) !important;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            margin: 10px 0;
+            border-radius: 15px !important;
+            border: 2px solid rgba(46, 204, 113, 0.3) !important;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            margin: 15px 0;
             transition: all 0.3s ease !important;
             animation: alertGradient 8s ease infinite;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+            padding: 20px !important;
+        }}
+
+        /* Style multiselect and slider in alert box */
+        div[data-testid="stExpander"] .stMultiSelect,
+        div[data-testid="stExpander"] .stSlider {{
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            backdrop-filter: blur(5px);
+        }}
+
+        /* Alert title styling */
+        div[data-testid="stExpander"] > div:first-child {{
+            font-size: 1.2em !important;
+            font-weight: 600 !important;
+            color: #2ecc71 !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px !important;
+            border-bottom: 2px solid rgba(46, 204, 113, 0.2);
+            padding-bottom: 15px !important;
         }}
 
         @keyframes alertGradient {{
