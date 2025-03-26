@@ -292,7 +292,7 @@ def main():
                             border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
                             border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
                             text-orientation:mixed !important;" 
-                            onclick="document.getElementById('map_btn_{i}').click()">
+                            onclick="document.getElementById('map_btn_" + ${i} + "').click()">
                             🗺️ View on Map
                         </button>
                         """
@@ -314,7 +314,7 @@ def main():
                             border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
                             border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
                             text-orientation:mixed !important;" 
-                            onclick="document.getElementById('read_btn_{i}').click()">
+                            onclick="document.getElementById('read_btn_" + ${i} + "').click()">
                             ✓ Mark Read
                         </button>
                         """
