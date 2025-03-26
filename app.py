@@ -339,11 +339,14 @@ def main():
     
         st.subheader("Time-Lapse Visualization")
         
-        # Create a container with enhanced styling
+        # Create a container with enhanced styling that works in both light and dark mode
         with st.container():
-            st.markdown("""
-            <div style="background-color: rgba(0,0,0,0.05); padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                <p>This time-lapse shows the progression of deforestation across years. 
+            current_theme = get_current_theme()
+            bg_color = "rgba(255,255,255,0.1)" if current_theme == "dark" else "rgba(0,0,0,0.05)"
+            
+            st.markdown(f"""
+            <div style="background-color: {bg_color}; padding: 10px; border-radius: 5px; margin-bottom: 10px; color: {st.session_state.text_color};">
+                <p style="color: {st.session_state.text_color};">This time-lapse shows the progression of deforestation across years. 
                 Move the slider to see how forest cover has changed over time.</p>
             </div>
             """, unsafe_allow_html=True)
@@ -391,8 +394,8 @@ def main():
                     # End of the time range, stop playing
                     st.session_state.playing_timelapse = False
             
-            # Show the year prominently
-            st.markdown(f"<h2 style='text-align: center;'>{year_for_timelapse}</h2>", unsafe_allow_html=True)
+            # Show the year prominently with correct color for the theme
+            st.markdown(f"<h2 style='text-align: center; color: {st.session_state.text_color};'>{year_for_timelapse}</h2>", unsafe_allow_html=True)
             
             # Create the map for the selected year
             timelapse_map = create_time_lapse_map(deforestation_data, year_for_timelapse)
@@ -465,9 +468,9 @@ def main():
                 st.markdown(f"**Population Decline**: {species['population_decline']}%")
                 st.progress(species['risk_level'] / 100)
                 
-                risk_text = "Low Risk" if species['risk_level'] < 30 else "Medium Risk" if species['risk_level'] < 70 else "High Risk"
-                risk_color = "green" if species['risk_level'] < 30 else "orange" if species['risk_level'] < 70 else "red"
-                st.markdown(f"Risk Level: <span style='color:{risk_color}'>{risk_text}</span>", unsafe_allow_html=True)
+                # Use risk_level_html from utils to get consistent, theme-aware risk styling
+                risk_html = risk_level_html(species['risk_level'])
+                st.markdown(f"Risk Level: {risk_html}", unsafe_allow_html=True)
     
     with tab3:
         st.subheader("Deforestation Trends and Analysis")

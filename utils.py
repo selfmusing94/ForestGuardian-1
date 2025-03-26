@@ -39,58 +39,187 @@ def apply_theme_css():
     # Define CSS based on the current theme
     css = f"""
     <style>
+        /* Base app styling */
         .stApp {{
             background-color: {st.session_state.bg_color};
-            color: {st.session_state.text_color};
+            color: {st.session_state.text_color} !important;
         }}
         
+        /* Style for sidebar */
+        section[data-testid="stSidebar"] {{
+            background-color: {st.session_state.secondary_bg_color};
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        /* Light and dark mode specific text colors for all elements */
+        .stTextInput label, .stTextInput input,
+        .stSelectbox label, .stSelectbox div,
+        .stMultiSelect label, .stMultiSelect div,
+        .stSlider label, .stSlider div,
+        .stCheckbox label, .stRadio label,
+        div[data-testid="stMarkdownContainer"] p,
+        div[data-testid="stMarkdownContainer"] li,
+        div[data-testid="stMarkdownContainer"] span,
+        div[data-testid="stMarkdownContainer"] a,
+        div[data-testid="stMarkdownContainer"] h1,
+        div[data-testid="stMarkdownContainer"] h2,
+        div[data-testid="stMarkdownContainer"] h3,
+        div[data-testid="stMarkdownContainer"] h4,
+        div[data-testid="stMarkdownContainer"] h5,
+        div[data-testid="stMarkdownContainer"] h6,
+        div[data-testid="stExpander"] summary span,
+        div[data-testid="stExpander"] div p {{
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        /* Ensure expander content is visible */
+        details, details[open] {{
+            background-color: {st.session_state.secondary_bg_color};
+            color: {st.session_state.text_color} !important;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid {'rgba(255,255,255,0.1)' if theme == 'dark' else 'rgba(0,0,0,0.1)'};
+        }}
+        
+        /* Ensure all text is visible */
+        * {{
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        /* Set specific elements with their appropriate colors */
+        a {{
+           color: {'#8AB4F8' if theme == 'dark' else '#0D6EFD'} !important;
+        }}
+        
+        /* Improve data frame visibility */
+        .stDataFrame div[data-testid="stTable"] {{
+            background-color: {'rgba(255,255,255,0.05)' if theme == 'dark' else 'rgba(255,255,255,1)'};
+            border-radius: 5px;
+            padding: 2px;
+        }}
+        
+        .stDataFrame div[data-testid="stTable"] table {{
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        .stDataFrame div[data-testid="stTable"] th {{
+            background-color: {'rgba(255,255,255,0.1)' if theme == 'dark' else 'rgba(240,242,246,1)'};
+            color: {st.session_state.text_color} !important;
+            font-weight: bold;
+        }}
+        
+        .stDataFrame div[data-testid="stTable"] td {{
+            background-color: {'rgba(255,255,255,0.05)' if theme == 'dark' else 'rgba(255,255,255,1)'};
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        /* Tabs styling */
         .stTabs [data-baseweb="tab-list"] {{
             background-color: {st.session_state.secondary_bg_color};
         }}
         
         .stTabs [data-baseweb="tab"] {{
-            color: {st.session_state.text_color};
-        }}
-        
-        .stDataFrame {{
-            background-color: {st.session_state.secondary_bg_color};
-        }}
-        
-        div[data-testid="stMetricValue"] {{
-            font-size: 1.5rem;
+            color: {st.session_state.text_color} !important;
             font-weight: bold;
         }}
         
+        /* Metric styling */
+        div[data-testid="stMetricValue"], span[data-testid="stMetricValue"] {{
+            font-size: 1.5rem !important;
+            font-weight: bold !important;
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        div[data-testid="stMetricLabel"], span[data-testid="stMetricLabel"] {{
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        div[data-testid="stMetricDelta"], span[data-testid="stMetricDelta"] {{
+            font-weight: bold !important;
+        }}
+        
+        /* Better contrast for elements in dark mode */
+        .stSelectbox div, .stMultiSelect div {{
+            background-color: {'rgba(255,255,255,0.1)' if theme == 'dark' else 'transparent'};
+            border-radius: 5px;
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        /* Improve select dropdown visibility */
+        div[data-baseweb="select"] {{
+            background-color: {'rgba(255,255,255,0.1)' if theme == 'dark' else 'transparent'};
+            color: {st.session_state.text_color} !important;
+            border-radius: 5px;
+        }}
+        
+        div[data-baseweb="select"] option {{
+            background-color: {'#1E1E1E' if theme == 'dark' else '#FFFFFF'};
+            color: {st.session_state.text_color} !important;
+        }}
+        
+        /* Improved container styling */
+        div[data-testid="stContainer"] {{
+            background-color: {'rgba(255,255,255,0.05)' if theme == 'dark' else 'rgba(0,0,0,0.02)'};
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid {'rgba(255,255,255,0.1)' if theme == 'dark' else 'rgba(0,0,0,0.05)'};
+        }}
+        
+        /* Map container styling */
         .map-container {{
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }}
         
+        /* Info box styling */
+        div[data-testid="stAlert"] {{
+            background-color: {'rgba(66, 150, 250, 0.2)' if theme == 'dark' else 'rgba(66, 150, 250, 0.1)'};
+            color: {'#8AB4F8' if theme == 'dark' else '#1E5A96'} !important;
+        }}
+        
+        div[data-testid="stAlert"] p {{
+            color: {'#FFFFFF' if theme == 'dark' else '#1E5A96'} !important;
+        }}
+        
+        /* Success message styling */
+        div[data-testid="stSuccessMessage"] {{
+            background-color: {'rgba(45, 200, 65, 0.2)' if theme == 'dark' else 'rgba(45, 200, 65, 0.1)'};
+            color: {'#A7F3D0' if theme == 'dark' else '#047857'} !important;
+        }}
+        
+        div[data-testid="stSuccessMessage"] p {{
+            color: {'#FFFFFF' if theme == 'dark' else '#047857'} !important;
+        }}
+        
+        /* Risk level styling with brighter colors for dark mode */
         .risk-high {{
-            color: #FF5252;
+            color: {'#FF6B6B' if theme == 'dark' else '#E53935'} !important;
             font-weight: bold;
         }}
         
         .risk-medium {{
-            color: #FFA726;
+            color: {'#FFD166' if theme == 'dark' else '#FB8C00'} !important;
             font-weight: bold;
         }}
         
         .risk-low {{
-            color: #66BB6A;
+            color: {'#A7F3D0' if theme == 'dark' else '#388E3C'} !important;
             font-weight: bold;
         }}
         
+        /* Alert badge styling */
         .alert-badge {{
-            background-color: #FF5252;
-            color: white;
+            background-color: {'#FF6B6B' if theme == 'dark' else '#FF5252'};
+            color: white !important;
             padding: 3px 8px;
             border-radius: 12px;
             font-size: 12px;
             margin-left: 6px;
+            font-weight: bold;
         }}
         
+        /* Tooltip styling */
         .tooltip {{
             position: relative;
             display: inline-block;
@@ -99,8 +228,8 @@ def apply_theme_css():
         .tooltip .tooltiptext {{
             visibility: hidden;
             width: 120px;
-            background-color: black;
-            color: #fff;
+            background-color: {'#444444' if theme == 'dark' else 'black'};
+            color: white !important;
             text-align: center;
             border-radius: 6px;
             padding: 5px;
@@ -118,20 +247,45 @@ def apply_theme_css():
             opacity: 1;
         }}
         
+        /* Animation for icons */
         .animated-icon {{
             animation: pulse 2s infinite;
         }}
         
         @keyframes pulse {{
-            0% {{
-                opacity: 1;
-            }}
-            50% {{
-                opacity: 0.5;
-            }}
-            100% {{
-                opacity: 1;
-            }}
+            0% {{ opacity: 1; }}
+            50% {{ opacity: 0.5; }}
+            100% {{ opacity: 1; }}
+        }}
+        
+        /* Button styling */
+        button, .stButton>button {{
+            background-color: {'#2E2E2E' if theme == 'dark' else '#F0F2F6'};
+            color: {'#FFFFFF' if theme == 'dark' else '#262730'} !important;
+            border: 1px solid {'rgba(255,255,255,0.2)' if theme == 'dark' else 'rgba(0,0,0,0.1)'};
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }}
+        
+        button:hover, .stButton>button:hover {{
+            background-color: {'#3E3E3E' if theme == 'dark' else '#E6E9EF'};
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }}
+        
+        /* Slider styling */
+        .stSlider {{
+            padding-top: 2rem;
+        }}
+        
+        .stSlider div[data-baseweb="slider"] {{
+            margin-top: 1rem;
+        }}
+        
+        /* Footer styling */
+        .st-emotion-cache-164nlkn {{
+            background-color: {'#1E1E1E' if theme == 'dark' else '#F0F2F6'};
+            color: {'#CCCCCC' if theme == 'dark' else '#666666'} !important;
         }}
     </style>
     """
