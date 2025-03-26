@@ -297,10 +297,10 @@ def apply_theme_css():
             font-weight: bold;
         }}
 
-        /* Alert box animation */
+        /* Alert box styling and animation */
         @keyframes alertPulse {{
             0% {{ transform: scale(1); background-position: 0% 50%; }}
-            50% {{ transform: scale(1.05); background-position: 100% 50%; }}
+            50% {{ transform: scale(1.02); background-position: 100% 50%; }}
             100% {{ transform: scale(1); background-position: 0% 50%; }}
         }}
 
@@ -445,6 +445,36 @@ def apply_theme_css():
             background-color: {'#1E1E1E' if theme == 'dark' else '#F0F2F6'};
             color: {'#CCCCCC' if theme == 'dark' else '#666666'} !important;
         }}
+
+        /* Enhanced expander styling for alerts */
+        div[data-testid="stExpander"] {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(52, 152, 219, 0.05) 100%);
+            border-radius: 10px !important;
+            border: 1px solid rgba(46, 204, 113, 0.2) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin: 10px 0;
+            transition: all 0.3s ease !important;
+        }
+
+        div[data-testid="stExpander"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.4) !important;
+        }
+
+        /* Alert content styling */
+        div[data-testid="stExpander"] > div {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 8px;
+            padding: 15px !important;
+            margin-top: 10px;
+        }
+
+        /* Alert header styling */
+        div[data-testid="stExpander"] > div:first-child {
+            border-bottom: 1px solid rgba(46, 204, 113, 0.2);
+            padding-bottom: 10px !important;
+        }
     </style>
     """
 
