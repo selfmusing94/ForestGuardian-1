@@ -349,65 +349,20 @@ def main():
             
             # Mark All as Read button with custom HTML and improved styling
             with col1:
-                mark_all_html = f"""
-                <button 
-                    style="width:100%; padding:10px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
-                    color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
-                    border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
-                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                    text-orientation:mixed !important; font-weight:bold;" 
-                    onclick="document.getElementById('mark_all_btn').click()">
-                    ✓ Mark All as Read
-                </button>
-                """
-                st.markdown(mark_all_html, unsafe_allow_html=True)
-                # Hidden button for functionality (with minimal height to hide it)
-                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
-                if st.button("Mark All as Read", key="mark_all_btn"):
+                if st.button("✓ Mark All as Read", key="mark_all_btn", use_container_width=True):
                     st.success("All alerts marked as read")
                     st.session_state.notification_shown = False
                     time.sleep(1)
-                st.markdown("</div>", unsafe_allow_html=True)
             
             # Export Alerts button with custom HTML and improved styling
             with col2:
-                export_html = f"""
-                <button 
-                    style="width:100%; padding:10px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
-                    color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
-                    border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
-                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                    text-orientation:mixed !important; font-weight:bold;" 
-                    onclick="document.getElementById('export_btn').click()">
-                    📊 Export Alerts (CSV)
-                </button>
-                """
-                st.markdown(export_html, unsafe_allow_html=True)
-                # Hidden button for functionality (with minimal height to hide it)
-                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
-                if st.button("Export Alerts (CSV)", key="export_btn"):
+                if st.button("📊 Export Alerts (CSV)", key="export_btn", use_container_width=True):
                     st.success("Alerts exported to CSV")
-                st.markdown("</div>", unsafe_allow_html=True)
             
             # Schedule Report button with custom HTML and improved styling
             with col3:
-                schedule_html = f"""
-                <button 
-                    style="width:100%; padding:10px; background-color:{'#2E2E2E' if current_theme == 'dark' else '#F0F2F6'}; 
-                    color:{'#FFFFFF' if current_theme == 'dark' else '#262730'}; 
-                    border:1px solid {'rgba(255,255,255,0.2)' if current_theme == 'dark' else 'rgba(0,0,0,0.1)'};
-                    border-radius:5px; cursor:pointer; font-family:Arial; writing-mode:horizontal-tb !important;
-                    text-orientation:mixed !important; font-weight:bold;" 
-                    onclick="document.getElementById('schedule_btn').click()">
-                    📅 Schedule Report
-                </button>
-                """
-                st.markdown(schedule_html, unsafe_allow_html=True)
-                # Hidden button for functionality (with minimal height to hide it)
-                st.markdown(f"<div style='height:0px; overflow:hidden;'>", unsafe_allow_html=True)
-                if st.button("Schedule Report", key="schedule_btn"):
+                if st.button("📅 Schedule Report", key="schedule_btn", use_container_width=True):
                     st.success("Weekly report scheduled")
-                st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("No deforestation alerts detected for the selected region and sensitivity level.")
     
