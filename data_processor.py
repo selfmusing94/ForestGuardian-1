@@ -110,6 +110,29 @@ def load_deforestation_data(region, year_range):
         'critical_percent': np.random.uniform(10, 30)
     }
     
+    # Create yearly_data structure for the time-lapse visualization
+    yearly_data = {}
+    for year in years:
+        # Calculate data for this specific year
+        year_df = df[df['year'] == year]
+        year_loss = year_df['deforestation_hectares'].sum()
+        
+        # Count affected species for this year (synthetic)
+        affected_species = int(base_loss_rates.get(region, 1000000) / 10000 * (1 + (years.index(year) * 0.05)))
+        
+        # Primary cause of deforestation
+        causes = ['Agricultural Expansion', 'Logging', 'Mining', 'Infrastructure']
+        cause_probs = [0.45, 0.35, 0.12, 0.08]
+        primary_cause = np.random.choice(causes, p=cause_probs)
+        primary_cause_percentage = np.random.randint(30, 60)
+        
+        yearly_data[year] = {
+            'loss_hectares': year_loss,
+            'affected_species': affected_species,
+            'primary_cause': primary_cause,
+            'primary_cause_percentage': primary_cause_percentage
+        }
+    
     # Combine all data into a single structured dictionary
     result = {
         'raw_data': df,
@@ -118,7 +141,8 @@ def load_deforestation_data(region, year_range):
         'hotspots': hotspots,
         'protected_areas': protected_areas,
         'region': region,
-        'year_range': year_range
+        'year_range': year_range,
+        'yearly_data': yearly_data
     }
     
     return result

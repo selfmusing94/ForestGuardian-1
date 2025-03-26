@@ -50,11 +50,12 @@ def create_map(deforestation_data, layers):
                 float(spot['area_hectares']) / 1000  # Scale down for better visualization
             ])
         
-        # Create heatmap layer
+        # Create heatmap layer - Use string keys for gradient dictionary
+        # The error was happening because Folium can't handle float keys in dictionaries
         HeatMap(
             data=heat_data,
             radius=15,
-            gradient={0.4: 'blue', 0.65: 'yellow', 1: 'red'},
+            gradient={"0.4": 'blue', "0.65": 'yellow', "1.0": 'red'},
             name="Deforestation Heatmap",
             show=True
         ).add_to(m)
@@ -107,7 +108,7 @@ def create_map(deforestation_data, layers):
         protected_group = folium.FeatureGroup(name="Protected Areas", show=True)
         
         # Number of protected areas to show
-        num_areas = min(20, deforestation_data['protected_areas']['total_count'])
+        num_areas = min(10, int(deforestation_data['protected_areas']['total_count']))
         
         # Region center
         center_lat, center_lon = center
@@ -122,12 +123,19 @@ def create_map(deforestation_data, layers):
             
             # Status based on overall protection rates
             status_odds = [
-                deforestation_data['protected_areas']['well_protected_percent'],
-                deforestation_data['protected_areas']['at_risk_percent'],
-                deforestation_data['protected_areas']['critical_percent']
+                float(deforestation_data['protected_areas']['well_protected_percent']),
+                float(deforestation_data['protected_areas']['at_risk_percent']),
+                float(deforestation_data['protected_areas']['critical_percent'])
             ]
-            status_odds = [o/sum(status_odds) for o in status_odds]  # Normalize
             
+            # Ensure status_odds are valid probabilities
+            total = sum(status_odds)
+            if total > 0:
+                status_odds = [o/total for o in status_odds]  # Normalize
+            else:
+                status_odds = [0.33, 0.33, 0.34]  # Default equal probabilities
+            
+            # Generate status
             status = np.random.choice(
                 ['Well Protected', 'At Risk', 'Critical'],
                 p=status_odds
@@ -186,10 +194,23 @@ def create_time_lapse_map(deforestation_data, selected_year):
     )
     
     # Filter hotspots to only show those detected up to the selected year
-    filtered_hotspots = [
-        spot for spot in deforestation_data['hotspots'] 
-        if spot['first_detected'].year <= selected_year
-    ]
+    try:
+        filtered_hotspots = [
+            spot for spot in deforestation_data['hotspots'] 
+            if spot['first_detected'].year <= selected_year
+        ]
+    except (AttributeError, KeyError):
+        # If there's an issue with the data, create a simple empty map
+        title_html = f'''
+            <h3 align="center" style="font-size:16px">
+                <b>No deforestation data available for {selected_year}</b>
+            </h3>
+        '''
+        m.get_root().html.add_child(folium.Element(title_html))
+        return m
+    
+    # Add a control layer
+    folium.LayerControl().add_to(m)
     
     # Create severity-based markers
     for severity in [1, 2, 3]:
@@ -210,19 +231,35 @@ def create_time_lapse_map(deforestation_data, selected_year):
         # Add markers
         for spot in severity_hotspots:
             # Create popup content
+            try:
+                detection_year = spot['first_detected'].year
+            except AttributeError:
+                detection_year = selected_year  # Use selected year if data is corrupt
+                
+            # Format area with error handling
+            try:
+                area_str = f"{float(spot['area_hectares']):.1f}"
+            except (ValueError, TypeError, KeyError):
+                area_str = "Unknown"
+                
             popup_html = f"""
             <div style="width:200px;">
                 <h4>Deforested Area</h4>
-                <p><b>Year Detected:</b> {spot['first_detected'].year}</p>
-                <p><b>Area Affected:</b> {spot['area_hectares']:.1f} hectares</p>
+                <p><b>Year Detected:</b> {detection_year}</p>
+                <p><b>Area Affected:</b> {area_str} hectares</p>
                 <p><b>Severity:</b> {severity_name}</p>
             </div>
             """
             
-            # Add circle marker
+            # Add circle marker (with error handling for radius calculation)
+            try:
+                radius = max(3, min(15, np.sqrt(float(spot['area_hectares'])) / 5))
+            except (ValueError, TypeError, KeyError):
+                radius = 5  # Default radius if calculation fails
+                
             folium.CircleMarker(
                 location=[spot['lat'], spot['lon']],
-                radius=np.sqrt(spot['area_hectares']) / 5,  # Size proportional to area
+                radius=radius,  # Size proportional to area
                 color=color,
                 fill=True,
                 fill_opacity=0.6,
