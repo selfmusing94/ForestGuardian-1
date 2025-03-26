@@ -172,6 +172,32 @@ def apply_theme_css():
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }}
         
+        /* Fix for vertical text in Folium maps and other elements */
+        .leaflet-container .leaflet-control-layers,
+        .leaflet-control, 
+        .leaflet-popup-content,
+        .leaflet-tooltip,
+        .leaflet-control-layers-list,
+        .folium-map span, 
+        .folium-map p,
+        .folium-map a,
+        .folium-map div,
+        .folium-control-layers, 
+        .folium-control,
+        .leaflet-control-zoom,
+        .leaflet-bar,
+        .leaflet-control-attribution,
+        .folium-map button {{
+            font-family: 'Arial', sans-serif !important;
+            text-orientation: mixed !important;
+            writing-mode: horizontal-tb !important;
+            text-align: left !important;
+            letter-spacing: normal !important;
+            word-spacing: normal !important;
+            direction: ltr !important;
+            text-rendering: auto !important;
+        }}
+        
         /* Info box styling */
         div[data-testid="stAlert"] {{
             background-color: {'rgba(66, 150, 250, 0.2)' if theme == 'dark' else 'rgba(66, 150, 250, 0.1)'};
@@ -265,12 +291,34 @@ def apply_theme_css():
             border: 1px solid {'rgba(255,255,255,0.2)' if theme == 'dark' else 'rgba(0,0,0,0.1)'};
             border-radius: 5px;
             transition: all 0.3s ease;
+            text-orientation: mixed !important;
+            writing-mode: horizontal-tb !important;
+            text-align: center !important;
+            letter-spacing: normal !important;
+            word-spacing: normal !important;
+            font-family: 'Arial', sans-serif !important;
         }}
         
         button:hover, .stButton>button:hover {{
             background-color: {'#3E3E3E' if theme == 'dark' else '#E6E9EF'};
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }}
+        
+        /* Ensure button text is always horizontal and properly displayed */
+        .stButton button p,
+        .stButton button span,
+        .stButton button div,
+        .stButton button,
+        button span, 
+        button p, 
+        button div {{
+            text-orientation: mixed !important;
+            writing-mode: horizontal-tb !important;
+            text-align: center !important;
+            direction: ltr !important;
+            display: block !important;
+            font-family: 'Arial', sans-serif !important;
         }}
         
         /* Slider styling */
