@@ -102,15 +102,113 @@ def apply_theme_css():
             font-weight: 600 !important;
             letter-spacing: -0.5px;
         }}
+        /* Enhanced sidebar styling */
+        section[data-testid="stSidebar"] {{
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1)) !important;
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            animation: sidebarEntrance 0.5s ease-out;
+        }}
+
+        @keyframes sidebarEntrance {{
+            from {{
+                transform: translateX(-100%);
+                opacity: 0;
+            }}
+            to {{
+                transform: translateX(0);
+                opacity: 1;
+            }}
+        }}
+
+        /* Sidebar elements styling */
+        section[data-testid="stSidebar"] .block-container {{
+            padding: 2rem 1rem;
+        }}
+
+        section[data-testid="stSidebar"] h1 {{
+            background: linear-gradient(45deg, #2ecc71, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleGlow 3s ease-in-out infinite;
+        }}
+
+        @keyframes titleGlow {{
+            0%, 100% {{ filter: brightness(100%); }}
+            50% {{ filter: brightness(120%); }}
+        }}
+
+        /* Sidebar selectbox enhancement */
+        section[data-testid="stSidebar"] .stSelectbox {{
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 5px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }}
+
+        section[data-testid="stSidebar"] .stSelectbox:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }}
+
+        /* Slider styling in sidebar */
+        section[data-testid="stSidebar"] .stSlider {{
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }}
+
+        section[data-testid="stSidebar"] .stSlider:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }}
+
+        /* Checkbox styling */
+        section[data-testid="stSidebar"] .stCheckbox {{
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 8px 0;
+            transition: all 0.3s ease;
+        }}
+
+        section[data-testid="stSidebar"] .stCheckbox:hover {{
+            transform: translateY(-2px);
+        }}
+
+        /* Alert sensitivity indicators */
+        section[data-testid="stSidebar"] .row-widget.stMarkdown {{
+            text-align: center;
+            transition: all 0.3s ease;
+        }}
+
+        section[data-testid="stSidebar"] .row-widget.stMarkdown:hover {{
+            transform: scale(1.05);
+        }}
+
+        /* Update notification styling */
+        section[data-testid="stSidebar"] .element-container:last-child {{
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1));
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            animation: pulse 2s infinite;
+        }}
+
+        @keyframes pulse {{
+            0% {{ box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }}
+            70% {{ box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }}
+            100% {{ box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }}
+        }}
+
         /* Base app styling */
         .stApp {{
             background-color: {st.session_state.bg_color};
-            color: {st.session_state.text_color} !important;
-        }}
-
-        /* Style for sidebar */
-        section[data-testid="stSidebar"] {{
-            background-color: {st.session_state.secondary_bg_color};
             color: {st.session_state.text_color} !important;
         }}
 
