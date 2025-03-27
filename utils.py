@@ -103,32 +103,32 @@ def apply_theme_css():
             letter-spacing: -0.5px;
         }}
         /* Enhanced sidebar styling with glass effect */
-        section[data-testid="stSidebar"] {
+        section[data-testid="stSidebar"] {{
             background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(52, 152, 219, 0.15)) !important;
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
             border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
             box-shadow: 10px 0 20px rgba(0, 0, 0, 0.2) !important;
             animation: sidebarEntrance 0.6s ease-out;
-        }
+        }}
 
         /* Enhance sidebar content */
-        section[data-testid="stSidebar"] .block-container {
+        section[data-testid="stSidebar"] .block-container {{
             background: rgba(255, 255, 255, 0.05) !important;
             padding: 2.5rem 1.5rem !important;
             border-radius: 15px !important;
             margin: 10px !important;
-        }
+        }}
 
         /* Sidebar title animation */
-        section[data-testid="stSidebar"] h1 {
+        section[data-testid="stSidebar"] h1 {{
             background: linear-gradient(45deg, #2ecc71, #3498db) !important;
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             animation: titleGlow 3s ease-in-out infinite !important;
             font-size: 1.8em !important;
             margin-bottom: 1.5rem !important;
-        }
+        }}
 
         @keyframes sidebarEntrance {{
             from {{
@@ -695,7 +695,7 @@ def calculate_risk_color(risk_score):
     """Return a color based on risk score"""
     if risk_score < 30:
         return "green"
-    elif risk_score< 70:
+    elif risk_score < 70:
         return "orange"
     else:
         return "red"
@@ -751,3 +751,30 @@ def get_time_since(timestamp):
         return f"{minutes} minute{'s' if minutes > 1 else ''} ago"
     else:
         return "Just now"
+
+# Set session state defaults
+if 'theme' not in st.session_state:
+    st.session_state.theme = 'light'
+
+# Apply theme CSS
+st.markdown(apply_theme_css(), unsafe_allow_html=True)
+
+# Display theme toggle button
+if st.button('Toggle Theme'):
+    toggle_theme()
+
+# Your app code here...
+st.title('Streamlit Themed App')
+st.write('This is a sample Streamlit app with theme toggling functionality.')
+
+# Example usage of utility functions
+st.write(f"Formatted number: {format_number(1234567890)}")
+st.write(f"Risk level HTML: {risk_level_html(45)}")
+st.write(f"Percentage change: {calculate_percentage_change(100, 150):.2f}%")
+
+# Example notification
+show_notification("This is a sample notification")
+
+# Example time since function
+timestamp = datetime(2025, 3, 26, 12, 0, 0)
+st.write(f"Time since: {get_time_since(timestamp)}")
